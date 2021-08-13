@@ -1,6 +1,6 @@
 # adaptive_banner_ads_demo
 
-A new Flutter project.
+A Flutter project showing how to implement and customize adaptive banner ads.
 
 ## Getting Started
 
