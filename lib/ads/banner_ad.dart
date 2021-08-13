@@ -11,7 +11,7 @@ class BannerAD extends StatefulWidget {
   _BannerADState createState() => _BannerADState();
 }
 
-class _BannerADState extends State<BannerAD> with WidgetsBindingObserver {
+class _BannerADState extends State<BannerAD> {
   BannerAd? banner;
 
   AnchoredAdaptiveBannerAdSize? size;

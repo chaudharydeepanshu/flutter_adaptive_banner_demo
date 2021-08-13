@@ -14,8 +14,7 @@ class BannerADCustomised extends StatefulWidget {
   _BannerADCustomisedState createState() => _BannerADCustomisedState();
 }
 
-class _BannerADCustomisedState extends State<BannerADCustomised>
-    with WidgetsBindingObserver {
+class _BannerADCustomisedState extends State<BannerADCustomised>{
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
