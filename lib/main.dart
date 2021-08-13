@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'ads_state/ad_state.dart';
-import 'ads_state/banner_ad.dart';
-import 'ads_state/banner_ad_customised.dart';
+import 'ads/ad_state.dart';
+import 'ads/banner_ad.dart';
+import 'ads/banner_ad_customised.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
