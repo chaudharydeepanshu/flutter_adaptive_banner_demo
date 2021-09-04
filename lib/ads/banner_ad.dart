@@ -41,12 +41,14 @@ class _BannerADState extends State<BannerAD> {
             null //banner is only null for a very less time //don't think that banner will be null if ads fails loads
         ? SizedBox()
         : Container(
-          color: Colors.grey,
-          width: size!.width.toDouble(),
-          height: size!.height.toDouble(),
-          child: AdWidget(
-            ad: banner!,
-          ),
-        );
+            color: AdState.adStatus ? Colors.grey : Colors.transparent,
+            width: AdState.adStatus ? size!.width.toDouble() : 0,
+            height: AdState.adStatus ? size!.height.toDouble() : 0,
+            child: AdState.adStatus
+                ? AdWidget(
+                    ad: banner!,
+                  )
+                : Container(),
+          );
   }
 }
