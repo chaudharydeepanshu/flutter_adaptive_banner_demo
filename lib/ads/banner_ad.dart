@@ -28,6 +28,8 @@ class _BannerADState extends State<BannerAD> {
     now = DateTime.now().second.toString();
 
     // defines a timer to update ad ui according to latest adStatus value from AdState class
+    // this timer is set to setState every 5 seconds
+    // we are using it to hide ad loading status if ad fails to load due to any case other than internet
     everySecond = Timer.periodic(Duration(seconds: 5), (Timer t) {
       if (mounted) {
         setState(() {
