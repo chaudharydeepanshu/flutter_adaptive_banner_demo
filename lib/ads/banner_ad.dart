@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,26 @@ class _BannerADState extends State<BannerAD> {
   BannerAd? banner;
 
   AnchoredAdaptiveBannerAdSize? size;
+
+  String? now;
+  Timer? everySecond;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // sets first value
+    now = DateTime.now().second.toString();
+
+    // defines a timer to update ad ui according to latest adStatus value from AdState class
+    everySecond = Timer.periodic(Duration(seconds: 5), (Timer t) {
+      if (mounted) {
+        setState(() {
+          now = DateTime.now().second.toString();
+        });
+      }
+    });
+  }
 
   @override
   void didChangeDependencies() {

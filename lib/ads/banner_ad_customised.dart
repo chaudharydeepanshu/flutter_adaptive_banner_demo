@@ -29,12 +29,27 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
 
   AnchoredAdaptiveBannerAdSize? size;
 
+  String? now;
+  Timer? everySecond;
+
   @override
   void initState() {
     super.initState();
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    // sets first value
+    now = DateTime.now().second.toString();
+
+    // defines a timer to update ad ui according to latest adStatus value from AdState class
+    everySecond = Timer.periodic(Duration(seconds: 5), (Timer t) {
+      if (mounted) {
+        setState(() {
+          now = DateTime.now().second.toString();
+        });
+      }
+    });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
