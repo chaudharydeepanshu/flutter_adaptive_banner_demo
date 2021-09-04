@@ -14,7 +14,7 @@ class BannerADCustomised extends StatefulWidget {
   _BannerADCustomisedState createState() => _BannerADCustomisedState();
 }
 
-class _BannerADCustomisedState extends State<BannerADCustomised>{
+class _BannerADCustomisedState extends State<BannerADCustomised> {
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
@@ -93,58 +93,62 @@ class _BannerADCustomisedState extends State<BannerADCustomised>{
         ? SizedBox()
         : _connectionStatus == ConnectivityResult.none
             ? Container(
-              height: AdSize.banner.height.toDouble() + 10,
-              width: size!.width.toDouble(),
-              color: Colors.grey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'To support the app please connect to internet.',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-            : Container(
-              color: Colors.grey,
-              width: size!.width.toDouble(),
-              height: size!.height.toDouble(),
-              child: Stack(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Ad loading...\nThanks for your support',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
+                height: AdSize.banner.height.toDouble() + 10,
+                width: size!.width.toDouble(),
+                color: Colors.grey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'To support the app please connect to internet.',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  AdWidget(
-                    ad: banner!,
-                  ),
-                ],
-              ),
-            );
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            : Container(
+                color: AdState.adStatus ? Colors.grey : Colors.transparent,
+                width: AdState.adStatus ? size!.width.toDouble() : 0,
+                height: AdState.adStatus ? size!.height.toDouble() : 0,
+                child: Stack(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AdState.adStatus
+                                ? Expanded(
+                                    child: Text(
+                                      'Ad loading...\nThanks for your support',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ],
+                    ),
+                    AdState.adStatus
+                        ? AdWidget(
+                            ad: banner!,
+                          )
+                        : Container(),
+                  ],
+                ),
+              );
   }
 }
