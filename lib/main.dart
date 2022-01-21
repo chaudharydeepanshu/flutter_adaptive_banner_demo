@@ -11,11 +11,13 @@ Future<void> main() async {
   final adState = AdState(initFuture);
   runApp(Provider.value(
     value: adState,
-    builder: (context, child) => MyApp(),
+    builder: (context, child) => const MyApp(),
   ));
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,13 +25,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Adaptive Banner Ad'),
+      home: const MyHomePage(title: 'Adaptive Banner Ad'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -47,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
+          children: const <Widget>[
             BannerAD(),
             BannerADCustomised(),
           ],

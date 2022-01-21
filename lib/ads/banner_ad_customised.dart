@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'ad_state.dart';
-import 'anchored_adaptive_banner_adSize.dart';
+import 'anchored_adaptive_banner_ad_size.dart';
 
 class BannerADCustomised extends StatefulWidget {
   const BannerADCustomised({Key? key}) : super(key: key);
@@ -45,7 +45,7 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
     // defines a timer to update ad ui according to latest adStatus value from AdState class
     // this timer is set to setState every 5 seconds
     // we are using it to hide ad loading status if ad fails to load due to any case other than internet
-    everySecond = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    everySecond = Timer.periodic(const Duration(seconds: 5), (Timer t) {
       if (mounted) {
         setState(() {
           now = DateTime.now().second.toString();
@@ -61,7 +61,7 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
     try {
       result = await _connectivity.checkConnectivity();
     } on PlatformException catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       return;
     }
 
@@ -95,7 +95,7 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
           banner = BannerAd(
             listener: adState.adListener,
             adUnitId: adState.bannerAdUnitId!,
-            request: AdRequest(),
+            request: const AdRequest(),
             size: size!,
           )..load();
         }
@@ -105,9 +105,9 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
 
   @override
   Widget build(BuildContext context) {
-    print('Connection Status: ${_connectionStatus.toString()}');
+    debugPrint('Connection Status: ${_connectionStatus.toString()}');
     return banner == null
-        ? SizedBox()
+        ? const SizedBox()
         : _connectionStatus == ConnectivityResult.none
             ? Container(
                 height: AdSize.banner.height.toDouble() + 10,
@@ -118,7 +118,7 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const [
                         Expanded(
                           child: Text(
                             'To support the app please connect to internet.',
@@ -145,7 +145,7 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             AdState.adStatus
-                                ? Expanded(
+                                ? const Expanded(
                                     child: Text(
                                       'Ad loading...\nThanks for your support',
                                       style: TextStyle(
