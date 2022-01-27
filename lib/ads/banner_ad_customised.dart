@@ -118,13 +118,20 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            'To support the app please connect to internet.',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
+                      children: [
+                        SizedBox(
+                          height: size!.height.toDouble(),
+                          width: size!.width.toDouble(),
+                          child: const FittedBox(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                              child: Text(
+                                'To support the app please connect to internet.',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -145,13 +152,25 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             AdState.adStatus
-                                ? const Expanded(
-                                    child: Text(
-                                      'Ad loading...\nThanks for your support',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
+                                ? SizedBox(
+                                    width: AdState.adStatus
+                                        ? size!.width.toDouble()
+                                        : 0,
+                                    height: AdState.adStatus
+                                        ? size!.height.toDouble()
+                                        : 0,
+                                    child: const FittedBox(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 8.0, right: 8.0),
+                                        child: Text(
+                                          'Ad loading...\nThanks for your support',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     ),
                                   )
                                 : Container(),
