@@ -27,9 +27,10 @@ class _BannerADState extends State<BannerAD> {
     // sets first value
     now = DateTime.now().second.toString();
 
-    // defines a timer to update ad ui according to latest adStatus value from AdState class
-    // this timer is set to setState every 5 seconds
-    // we are using it to hide ad loading status if ad fails to load due to any case other than internet
+    // Defines a timer to update ad ui according to latest adStatus value from AdState class
+    // This timer is set to setState every 5 seconds
+    // We are using it to hide ad loading status
+    // Hides ad only if ad fails to load with internet available on user device
     everySecond = Timer.periodic(const Duration(seconds: 5), (Timer t) {
       if (mounted) {
         setState(() {
@@ -60,18 +61,21 @@ class _BannerADState extends State<BannerAD> {
 
   @override
   Widget build(BuildContext context) {
-    return banner ==
-            null //banner is only null for a very less time //don't think that banner will be null if ads fails loads
-        ? const SizedBox()
-        : Container(
-            color: AdState.adStatus ? Colors.grey : Colors.transparent,
-            width: AdState.adStatus ? size!.width.toDouble() : 0,
-            height: AdState.adStatus ? size!.height.toDouble() : 0,
-            child: AdState.adStatus
-                ? AdWidget(
-                    ad: banner!,
-                  )
-                : Container(),
-          );
+    if (banner == null) {
+      // banner is only null for a very less time
+      // Never think that banner will be null if ads fails loads
+      return const SizedBox();
+    } else {
+      return Container(
+        color: AdState.adStatus ? Colors.grey : Colors.transparent,
+        width: AdState.adStatus ? size!.width.toDouble() : 0,
+        height: AdState.adStatus ? size!.height.toDouble() : 0,
+        child: AdState.adStatus
+            ? AdWidget(
+                ad: banner!,
+              )
+            : Container(),
+      );
+    }
   }
 }
