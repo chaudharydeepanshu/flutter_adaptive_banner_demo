@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
             BannerADCustomised(),
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

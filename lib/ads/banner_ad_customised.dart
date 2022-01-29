@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:adaptive_banner_ads_demo/connectivity/init_connectivity.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'ad_state.dart';
@@ -21,62 +21,53 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
 
   BannerAd? banner;
 
-  @override
-  void dispose() {
-    _connectivitySubscription.cancel();
-    super.dispose();
-  }
-
   AnchoredAdaptiveBannerAdSize? size;
-
-  String? now;
-  Timer? everySecond;
 
   @override
   void initState() {
     super.initState();
-    initConnectivity();
+    initConnectivityResult();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
-    // sets first value
-    now = DateTime.now().second.toString();
-
-    // Defines a timer to update ad ui according to latest adStatus value from AdState class
-    // This timer is set to setState every 5 seconds
-    // We are using it to hide ad loading status
-    // Hides ad only if ad fails to load with internet available on user device
-    everySecond = Timer.periodic(const Duration(seconds: 5), (Timer t) {
+    // Defines a timer to update ad ui according to latest adStatus value from AdState class.
+    // This timer is set to setState every 5 seconds.
+    // We are using it to hide ad loading status.
+    // Hides ad only if ad fails to load with internet available on user device.
+    // Generally checks is suddenly ads are available or not and if available loads it
+    // so you can remove this if you don't want to do that.
+    Timer.periodic(const Duration(seconds: 5), (Timer t) {
+      debugPrint("LOL setState");
       if (mounted) {
-        setState(() {
-          now = DateTime.now().second.toString();
-        });
+        setState(() {});
       }
     });
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initConnectivity() async {
-    late ConnectivityResult result;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      debugPrint(e.toString());
-      return;
-    }
+  @override
+  void dispose() {
+    // Disposing stream subscription.
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> initConnectivityResult() async {
+    late ConnectivityResult? result;
+    result = await initConnectivity(connectivity: _connectivity);
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted) {
+    if (!mounted || result == null) {
       return Future.value(null);
     }
 
+    // If the widget is not disposed and result is not null then calling _updateConnectionStatus().
     return _updateConnectionStatus(result);
   }
 
   void _updateConnectionStatus(ConnectivityResult result) {
+    // Calling setState to update _connectionStatus new value in widget.
     setState(() {
       _connectionStatus = result;
       if (banner != null) {
@@ -88,10 +79,18 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    // Initialising adState here because it need context
+    // and didChangeDependencies() is called few moments after the state loads its dependencies
+    // so context is available at this moment.
     final adState = Provider.of<AdState>(context);
+
     adState.initialization.then((value) async {
+      // Assigning the size of adaptive banner ad after adState initialization.
       size = await anchoredAdaptiveBannerAdSize(context);
+
       setState(() {
+        // If adState.bannerAdUnitId is null don't create a BannerAd.
         if (adState.bannerAdUnitId != null) {
           banner = BannerAd(
             listener: adState.adListener,
@@ -106,86 +105,98 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Connection Status: ${_connectionStatus.toString()}');
-    return banner == null
-        ? const SizedBox()
-        : _connectionStatus == ConnectivityResult.none
-            ? Container(
-                height: AdSize.banner.height.toDouble() + 10,
-                width: size!.width.toDouble(),
-                color: Colors.grey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+    // debugPrint('Connection Status: ${_connectionStatus.toString()}');
+    debugPrint('banner Status: $banner');
+    if (banner == null) {
+      // Generally banner is null for very less time only until it get assigned in didChangeDependencies.
+      // Never think that banner will be null if ads fails loads.
+      // To make banner null change the condition in didChangeDependencies or assign null to bannerAdUnitId in AdState().
+      return const SizedBox();
+    } else {
+      if (_connectionStatus == ConnectivityResult.none) {
+        // _connectionStatus is ConnectivityResult.none only if mobile data & wifi both are turned off.
+        return Container(
+          height: AdSize.banner.height.toDouble() + 10,
+          width: size!.width.toDouble(),
+          color: Colors.grey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: size!.height.toDouble(),
+                    width: size!.width.toDouble(),
+                    child: const FittedBox(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                        child: Text(
+                          'To support the app please connect to internet.',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      } else {
+        // If _connectionStatus is not ConnectivityResult.none then try to load ad.
+        return Container(
+          color: AdState.adStatus ? Colors.grey : Colors.transparent,
+          width: AdState.adStatus ? size!.width.toDouble() : 0,
+          height: AdState.adStatus ? size!.height.toDouble() : 0,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // If AdState.adStatus is true then displays this message under transparent AdWidget()
+                      // but if its false it will display a empty sizedBox.
+                      if (AdState.adStatus)
                         SizedBox(
-                          height: size!.height.toDouble(),
-                          width: size!.width.toDouble(),
+                          width: AdState.adStatus ? size!.width.toDouble() : 0,
+                          height:
+                              AdState.adStatus ? size!.height.toDouble() : 0,
                           child: const FittedBox(
                             child: Padding(
                               padding: EdgeInsets.only(left: 8.0, right: 8.0),
                               child: Text(
-                                'To support the app please connect to internet.',
+                                'Ad loading...\nThanks for your support',
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            : Container(
-                color: AdState.adStatus ? Colors.grey : Colors.transparent,
-                width: AdState.adStatus ? size!.width.toDouble() : 0,
-                height: AdState.adStatus ? size!.height.toDouble() : 0,
-                child: Stack(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AdState.adStatus
-                                ? SizedBox(
-                                    width: AdState.adStatus
-                                        ? size!.width.toDouble()
-                                        : 0,
-                                    height: AdState.adStatus
-                                        ? size!.height.toDouble()
-                                        : 0,
-                                    child: const FittedBox(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 8.0, right: 8.0),
-                                        child: Text(
-                                          'Ad loading...\nThanks for your support',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ],
-                    ),
-                    AdState.adStatus
-                        ? AdWidget(
-                            ad: banner!,
-                          )
-                        : Container(),
-                  ],
-                ),
-              );
+                        )
+                      else
+                        const SizedBox(),
+                    ],
+                  ),
+                ],
+              ),
+
+              // If AdState.adStatus is true then ads loads over the message
+              // but if its false it will display a empty sizedBox.
+              if (AdState.adStatus)
+                AdWidget(
+                  ad: banner!,
+                )
+              else
+                const SizedBox(),
+            ],
+          ),
+        );
+      }
+    }
   }
 }
