@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -17,36 +16,21 @@ class _BannerADState extends State<BannerAD> {
 
   AnchoredAdaptiveBannerAdSize? size;
 
-  String? now;
-  Timer? everySecond;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // sets first value
-    now = DateTime.now().second.toString();
-
-    // Defines a timer to update ad ui according to latest adStatus value from AdState class
-    // This timer is set to setState every 5 seconds
-    // We are using it to hide ad loading status
-    // Hides ad only if ad fails to load with internet available on user device
-    everySecond = Timer.periodic(const Duration(seconds: 5), (Timer t) {
-      if (mounted) {
-        setState(() {
-          now = DateTime.now().second.toString();
-        });
-      }
-    });
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    // Initialising adState here because it need context
+    // and didChangeDependencies() is called few moments after the state loads its dependencies
+    // so context is available at this moment.
     final adState = Provider.of<AdState>(context);
+
     adState.initialization.then((value) async {
+      // Assigning the size of adaptive banner ad after adState initialization.
       size = await anchoredAdaptiveBannerAdSize(context);
+
       setState(() {
+        // If adState.bannerAdUnitId is null don't create a BannerAd.
         if (adState.bannerAdUnitId != null) {
           banner = BannerAd(
             listener: adState.adListener,
@@ -62,8 +46,9 @@ class _BannerADState extends State<BannerAD> {
   @override
   Widget build(BuildContext context) {
     if (banner == null) {
-      // banner is only null for a very less time
-      // Never think that banner will be null if ads fails loads
+      // Generally banner is null for very less time only until it get assigned in didChangeDependencies.
+      // Never think that banner will be null if ads fails loads.
+      // To make banner null change the condition in didChangeDependencies or assign null to bannerAdUnitId in AdState().
       return const SizedBox();
     } else {
       return Container(
@@ -71,10 +56,12 @@ class _BannerADState extends State<BannerAD> {
         width: AdState.adStatus ? size!.width.toDouble() : 0,
         height: AdState.adStatus ? size!.height.toDouble() : 0,
         child: AdState.adStatus
+            // If AdState.adStatus is true then ads loads
+            // but if its false it will display a empty sizedBox.
             ? AdWidget(
                 ad: banner!,
               )
-            : Container(),
+            : const SizedBox(),
       );
     }
   }
