@@ -45,6 +45,7 @@ class _BannerADState extends State<BannerAD> {
 
   @override
   Widget build(BuildContext context) {
+    // debugPrint('banner Status: $banner');
     if (banner == null) {
       // Generally banner is null for very less time only until it get assigned in didChangeDependencies.
       // Never think that banner will be null if ads fails loads.

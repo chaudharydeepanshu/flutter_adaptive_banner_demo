@@ -37,7 +37,6 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
     // Generally checks is suddenly ads are available or not and if available loads it
     // so you can remove this if you don't want to do that.
     Timer.periodic(const Duration(seconds: 5), (Timer t) {
-      debugPrint("LOL setState");
       if (mounted) {
         setState(() {});
       }
@@ -106,7 +105,7 @@ class _BannerADCustomisedState extends State<BannerADCustomised> {
   @override
   Widget build(BuildContext context) {
     // debugPrint('Connection Status: ${_connectionStatus.toString()}');
-    debugPrint('banner Status: $banner');
+    // debugPrint('banner Status: $banner');
     if (banner == null) {
       // Generally banner is null for very less time only until it get assigned in didChangeDependencies.
       // Never think that banner will be null if ads fails loads.
