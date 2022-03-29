@@ -4,7 +4,7 @@ A Flutter project showing how to implement and customize adaptive banner ads.
 
 ## Follow article for implementation
 
-https://medium.com/@deepanshuc2141/how-to-add-adaptive-banner-ads-in-your-flutter-app-using-google-mobile-ads-ed8a328c63ec
+https://medium.com/@deepanshuc2141/how-to-implement-dark-mode-in-your-flutter-app-without-using-any-dark-mode-packages-bd82e725af41
 
 ## Getting Started
 
