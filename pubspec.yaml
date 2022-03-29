@@ -23,9 +23,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_mobile_ads: ^1.0.1
+  google_mobile_ads: ^1.1.0
   provider: ^6.0.2
-  connectivity_plus: ^2.2.0
+  connectivity_plus: ^2.2.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
